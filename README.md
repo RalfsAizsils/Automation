@@ -8,8 +8,6 @@ Nolasīt PDF dokumentus pa gabaliem un tos atskaņot ar [Google Translate](https
 
 Programmai jāstrādā ar saskarni, kurā var nomainīt iestatītjumus un izvēlēties PDF.
 
-Alternativs Google Translate būtu [Hugo.lv](https://hugo.lv/en/Speech/Synthesis), bet tas limitē programmas darbību, jo varēs atskaņot tikai latviski un Hugo pārstrādā tekstu lēnāk. Bet ar Hugo var lejuplādēt radīto tekstu un tad to varētu samontēt kopā.
-
 ## Bibliotēkas
 
 ```python
