@@ -13,8 +13,16 @@ def browseFiles():
         filetypes = (("PDF files","*.pdf*"),("All files","*.*"))
     )
     label_file_explorer.configure(text="Reading: " + filename)
-    pdf_file = PyPDF2.PdfReader(open(filename,"rb"))
-    print(pdf_file.pages[0].extract_text())
+    readPDF(PyPDF2.PdfReader(open(filename,"rb")))
+    
+
+def readPDF(pdf):
+    page_count = len(pdf.pages)
+    
+    for i in range(0, page_count):
+        print(pdf.pages[i].extract_text())
+        
+
       
 app = tk.Tk()
   
