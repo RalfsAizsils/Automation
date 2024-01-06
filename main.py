@@ -6,6 +6,14 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import time
 
+app = tk.Tk()
+app.title('File Explorer')
+app.geometry("500x500")
+app.config(background = "white")
+# Settings
+wait_for_page = 1
+reading_languag = "lv"
+
 def browseFiles():
     filename = filedialog.askopenfilename(
         initialdir = "/",
@@ -14,21 +22,30 @@ def browseFiles():
     )
     label_file_explorer.configure(text="Reading: " + filename)
     readPDF(PyPDF2.PdfReader(open(filename,"rb")))
-    
 
 def readPDF(pdf):
-    page_count = len(pdf.pages)
-    
-    for i in range(0, page_count):
-        print(pdf.pages[i].extract_text())
-        
+    service = Service()
+    option = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=service, options=option)
+    driver.get("https://translate.google.com/?sl=" + reading_languag)
+    time.sleep(wait_for_page)
 
-      
-app = tk.Tk()
-  
-app.title('File Explorer')
-app.geometry("500x500")
-app.config(background = "white")
+    # Cookie brīdinājuma
+    btn = driver.find_elements(By.CSS_SELECTOR, "[aria-label='Accept all']")
+    if len(btn) > 0:
+        btn[0].click()
+    else:
+        print("Neatradam Cookie brīdinājumu. Izlaišam...")
+
+    time.sleep(2)
+
+    page_count = len(pdf.pages)
+
+    for i in range(0, page_count):
+        text = pdf.pages[i].extract_text()
+        #print(text)
+
+
 
 label_file_explorer = tk.Label(
     app, 
