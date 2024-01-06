@@ -31,21 +31,29 @@ def readPDF(pdf):
     time.sleep(wait_for_page)
 
     # Cookie brīdinājuma
-    btn = driver.find_elements(By.CSS_SELECTOR, "[aria-label='Accept all']")
+    # izmantojam "jsname", jo nav id un "aria-label" var atšķirties skatoties pēc pārlūkprogrammas valodas
+    btn = driver.find_elements(By.CSS_SELECTOR, "[jsname='b3VHJd']")
     if len(btn) > 0:
         btn[0].click()
     else:
         print("Neatradam Cookie brīdinājumu. Izlaišam...")
 
-    time.sleep(2)
-
     page_count = len(pdf.pages)
+    # izmantojam "data-tooltip-id", jo nav id un "aria-label" var atšķirties skatoties pēc pārlūkprogrammas valodas
+    play_btn = driver.find_element(By.CSS_SELECTOR, "[data-tooltip-id='ucj-10']")
+    input_field = driver.find_element(By.CLASS_NAME, "er8xn")
 
     for i in range(0, page_count):
         text = pdf.pages[i].extract_text()
+        # mēs pieņemam ka lapā parasti nav vairāk nekā 5000 simboli
+        input_field.send_keys(text)
+        play_btn.click()
         #print(text)
+        # pārbaudam vai teksts vēl tiek atskaņots. Ja jā, tad "label-on" sakritīs ar esošo "label", un mēs turpināsim gaidīt
+        while play_btn.get_attribute("data-aria-label-on") == play_btn.get_attribute("aria-label"):
+            time.sleep(1)
 
-
+        input_field.clear()
 
 label_file_explorer = tk.Label(
     app, 
