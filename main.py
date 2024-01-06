@@ -7,12 +7,21 @@ from selenium.webdriver.common.by import By
 import time
 
 app = tk.Tk()
-app.title('File Explorer')
-app.geometry("500x500")
+app.title('PDF Reader')
+app.geometry("500x180")
 app.config(background = "white")
+lang_options = [
+    "Auto","Latviski","English","Русский"
+]
+name_to_lang_code = {
+    "Latviski":"lv",
+    "English":"en",
+    "Русский":"ru",
+    "Auto":"auto"
+}
 # Settings
-wait_for_page = 1
-reading_languag = "lv"
+reading_languag = tk.StringVar() 
+reading_languag.set(lang_options[0])
 
 def browseFiles():
     filename = filedialog.askopenfilename(
@@ -27,8 +36,8 @@ def readPDF(pdf):
     service = Service()
     option = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=service, options=option)
-    driver.get("https://translate.google.com/?sl=" + reading_languag)
-    time.sleep(wait_for_page)
+    driver.get("https://translate.google.com/?sl=" + name_to_lang_code[reading_languag.get()] + "&tl=ja")
+    time.sleep(2)
 
     # Cookie brīdinājuma
     # izmantojam "jsname", jo nav id un "aria-label" var atšķirties skatoties pēc pārlūkprogrammas valodas
@@ -59,22 +68,18 @@ def tryToReadPage(i, pdf, play_btn, input_field):
         # šis dod laiku googlai saprast ierakstītot tekstu, ja teksts ir mazs
         app.after(500, play_btn.click)
         print(play_btn.get_attribute("data-aria-label-on") == play_btn.get_attribute("aria-label"))
-        app.after(5000, tryToReadPage, i+1, pdf, play_btn, input_field)
+        app.after(1000, tryToReadPage, i+1, pdf, play_btn, input_field)
 
-label_file_explorer = tk.Label(
-    app, 
-    text = "Pick a file...",
-    width = 71, height = 4, 
-    fg = "blue"
-)
+label_file_explorer = tk.Label(app,text = "...", width = 60, height = 3, fg = "blue") 
+button_explore = tk.Button(app, text = "PDF",command = browseFiles, pady=2) 
+drop_box = tk.OptionMenu(app, reading_languag, *lang_options) 
+credit = tk.Label(app, text="Programmētājs: Ralfs Aizsils 231RDB026")
   
-button_explore = tk.Button(
-    app, 
-    text = "Browse Files",
-    command = browseFiles
-) 
-  
-label_file_explorer.grid(column = 1, row = 1)
-button_explore.grid(column = 1, row = 2)
+app.grid_rowconfigure([1,5], minsize=20)
+app.grid_columnconfigure(1, minsize=40)
+label_file_explorer.grid(column = 2, row = 2)
+drop_box.grid(column=2, row=3)
+button_explore.grid(column = 2, row = 4)
+credit.grid(column=2, row=6)
 
 app.mainloop()
