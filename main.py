@@ -39,15 +39,12 @@ def readPDF(pdf):
     driver.get("https://translate.google.com/?sl=" + name_to_lang_code[reading_languag.get()] + "&tl=ja")
     time.sleep(2)
 
-    # Cookie brīdinājuma
-    # izmantojam "jsname", jo nav id un "aria-label" var atšķirties skatoties pēc pārlūkprogrammas valodas
     btn = driver.find_elements(By.CSS_SELECTOR, "[jsname='b3VHJd']")
     if len(btn) > 0:
         btn[0].click()
     else:
         print("Neatradam Cookie brīdinājumu. Izlaišam...")
 
-    # izmantojam "data-tooltip-id", jo nav id un "aria-label" var atšķirties skatoties pēc pārlūkprogrammas valodas
     play_btn = driver.find_element(By.CSS_SELECTOR, "[data-tooltip-id='ucj-10']")
     input_field = driver.find_element(By.CLASS_NAME, "er8xn")
 
@@ -55,7 +52,6 @@ def readPDF(pdf):
 
 def tryToReadPage(i, pdf, play_btn, input_field):
     print("Try " + str(i))
-    # pārbaudam vai teksts vēl tiek atskaņots. Ja jā, tad "label-on" sakritīs ar esošo "label", un mēs pārbaudam atkal pēc sekundes
     if play_btn.get_attribute("data-aria-label-on") == play_btn.get_attribute("aria-label"):
         print("Wait " + str(i))
         app.after(1000, tryToReadPage, i, pdf, play_btn, input_field)
@@ -63,9 +59,7 @@ def tryToReadPage(i, pdf, play_btn, input_field):
         print("Read " + str(i))
         input_field.clear()
         text = pdf.pages[i].extract_text()
-        # mēs pieņemam ka lapā parasti nav vairāk nekā 5000 simboli
         input_field.send_keys(text)
-        # šis dod laiku googlai saprast ierakstītot tekstu, ja teksts ir mazs
         app.after(500, play_btn.click)
         print(play_btn.get_attribute("data-aria-label-on") == play_btn.get_attribute("aria-label"))
         app.after(1000, tryToReadPage, i+1, pdf, play_btn, input_field)
