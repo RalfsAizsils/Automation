@@ -51,17 +51,13 @@ def readPDF(pdf):
     tryToReadPage(0, pdf, play_btn, input_field)
 
 def tryToReadPage(i, pdf, play_btn, input_field):
-    print("Try " + str(i))
     if play_btn.get_attribute("data-aria-label-on") == play_btn.get_attribute("aria-label"):
-        print("Wait " + str(i))
         app.after(1000, tryToReadPage, i, pdf, play_btn, input_field)
     elif i<len(pdf.pages):
-        print("Read " + str(i))
         input_field.clear()
         text = pdf.pages[i].extract_text()
         input_field.send_keys(text)
-        app.after(500, play_btn.click)
-        print(play_btn.get_attribute("data-aria-label-on") == play_btn.get_attribute("aria-label"))
+        app.after(200, play_btn.click)
         app.after(1000, tryToReadPage, i+1, pdf, play_btn, input_field)
 
 label_file_explorer = tk.Label(app,text = "...", width = 60, height = 3, fg = "blue") 
